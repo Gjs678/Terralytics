@@ -1,0 +1,43 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "riskLevel": "high",
+        "description": "Brahmaputra river overflow warning."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [91.5, 26.0],
+            [92.0, 26.0],
+            [92.0, 26.3],
+            [91.5, 26.3],
+            [91.5, 26.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "riskLevel": "medium",
+        "description": "Barak valley localized flooding."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [92.5, 24.7],
+            [92.9, 24.7],
+            [92.9, 25.0],
+            [92.5, 25.0],
+            [92.5, 24.7]
+          ]
+        ]
+      }
+    }
+  ]
+}

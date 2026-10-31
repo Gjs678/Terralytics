@@ -1,0 +1,43 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "riskLevel": "high",
+        "description": "High landslide risk due to steep slopes and saturation."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [93.5, 27.0],
+            [93.8, 27.0],
+            [93.8, 27.3],
+            [93.5, 27.3],
+            [93.5, 27.0]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "riskLevel": "medium",
+        "description": "Moderate landslide risk along NH-10 corridor."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [88.5, 27.1],
+            [88.7, 27.1],
+            [88.7, 27.4],
+            [88.5, 27.4],
+            [88.5, 27.1]
+          ]
+        ]
+      }
+    }
+  ]
+}

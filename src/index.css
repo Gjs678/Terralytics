@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/*
+ * Classes that are assembled at runtime (e.g. MapOverlayToggle builds
+ * `bg-${colorClass}`) are invisible to Tailwind's static scanner, so they are
+ * safelisted here. Without this the "active" state of the map overlay toggles
+ * receives no styling at all.
+ */
+@source inline("{bg,border,text}-{terracotta-500,blue-500,monsoon-400}");
+
+/*
+ * TERRALYTICS design tokens.
+ *
+ * NOTE: the token *names* (`monsoon-*`, `moss-*`, `terracotta-*`) are kept from
+ * the original code base so that every existing utility class keeps working.
+ * Only the values changed:
+ *   monsoon    -> navy / slate neutral scale (surfaces, borders, text)
+ *   moss       -> restrained teal (brand accent, "live / safe / ok")
+ *   terracotta -> signal red (hazard / critical / destructive)
+ */
+@theme {
+  --color-moss-50: #effaf8;
+  --color-moss-100: #d3f3ee;
+  --color-moss-200: #a8e6dc;
+  --color-moss-300: #72d1c4;
+  --color-moss-400: #3fb7a8;
+  --color-moss-500: #1f9d8e;
+  --color-moss-600: #157a70;
+  --color-moss-700: #126159;
+  --color-moss-800: #124d48;
+  --color-moss-900: #113f3b;
+  --color-moss-950: #072523;
+
+  --color-monsoon-50: #f5f7fa;
+  --color-monsoon-100: #e8edf3;
+  --color-monsoon-200: #cfd8e3;
+  --color-monsoon-300: #a9b8ca;
+  --color-monsoon-400: #8a9db3;
+  --color-monsoon-500: #7b90a7;
+  --color-monsoon-600: #4b5e75;
+  --color-monsoon-700: #37475c;
+  --color-monsoon-800: #263548;
+  --color-monsoon-900: #172334;
+  --color-monsoon-950: #0d1522;
+
+  --color-terracotta-50: #fdf2f0;
+  --color-terracotta-100: #fbe0dc;
+  --color-terracotta-200: #f6c2ba;
+  --color-terracotta-300: #ee9a8e;
+  --color-terracotta-400: #e5705f;
+  --color-terracotta-500: #d9503f;
+  --color-terracotta-600: #b83a2b;
+  --color-terracotta-700: #932f23;
+  --color-terracotta-800: #782a21;
+  --color-terracotta-900: #63271f;
+
+  /* System font stacks: no webfont download, works offline in the field app. */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-heading: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-monsoon-950 text-monsoon-50; /* control-room default; light pages set their own surface */
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.01em;
+  }
+
+  /* Visible keyboard focus everywhere (components may still add their own). */
+  :focus-visible {
+    outline: 2px solid var(--color-moss-400);
+    outline-offset: 2px;
+  }
+
+  /* Leaflet overrides for dark mode */
+  .leaflet-container {
+    background: #0d1522 !important;
+    font-family: var(--font-sans) !important;
+  }
+  /* Invert map tiles for a dark mode look */
+  .dark-tiles {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+  }
+}
+
+/*
+ * Utilities referenced by existing components but previously never defined
+ * (animate-fade-in, animate-slide-up, custom-scrollbar), plus `ping`, which the
+ * map incident markers reference from inline styles.
+ */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes tl-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tl-slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@utility animate-fade-in {
+  animation: tl-fade-in 180ms ease-out both;
+}
+
+@utility animate-slide-up {
+  animation: tl-slide-up 220ms ease-out both;
+}
+
+@utility custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-monsoon-700) transparent;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-monsoon-700);
+    border-radius: 9999px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* Subtle survey-grid texture for the public/landing surfaces (pure CSS). */
+@utility bg-survey-grid {
+  background-image:
+    linear-gradient(to right, rgb(138 157 179 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(138 157 179 / 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
