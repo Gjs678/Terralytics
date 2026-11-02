@@ -1,7 +1,7 @@
 // Thin fetch-based API client for the MOSSAM FastAPI backend.
 // No new dependency added (plain fetch), matches project constraints.
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_BASE_URL) || 'http://localhost:8000';
 
 export class ApiError extends Error {
   status?: number;
