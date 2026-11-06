@@ -66,6 +66,7 @@ class PredictiveHazardEstimateOut(BaseModel):
     data_timestamp: str
     scoring_method: str
     confidence_note: str
+    prediction_source: str = "heuristic" 
 
 
 class LastMileStoppingPointOut(BaseModel):
@@ -253,3 +254,15 @@ class ImpactStatsOut(BaseModel):
 
 
 IncidentResponse.model_rebuild()
+
+
+# ---------- Machine Learning Subsystem Schemas ----------
+from .ml.schemas import (
+    MLModelStatusOut,
+    DatasetSummaryOut,
+    DatasetListOut,
+    MLPredictionInput,
+    MLPredictionOut,
+    MLTrainingRequest,
+    MLTrainingResultOut,
+)

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { NERMap } from '../components/map/NERMap';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { MapOverlayToggle } from '../components/map/MapOverlayToggle';
 import { AlertsFeed } from '../components/dashboard/AlertsFeed';
 import { FleetList } from '../components/dashboard/FleetList';
@@ -7,10 +6,12 @@ import { RouteComparisonPanel } from '../components/dashboard/RouteComparisonPan
 import { SimulateIncidentPanel } from '../components/dashboard/SimulateIncidentPanel';
 import { StatBlock } from '../components/shared/StatBlock';
 import { StatusBadge } from '../components/shared/StatusBadge';
-import { TrendChart } from '../components/dashboard/TrendChart';
 import { MOCK_IMPACT_STATS } from '../data/mockImpactStats';
 import { WeatherWidget } from '../components/shared/WeatherWidget';
 import { mossamApi, type IncidentResponseDto } from '../services/api';
+
+const NERMap = lazy(() => import('../components/map/NERMap').then((m) => ({ default: m.NERMap })));
+const TrendChart = lazy(() => import('../components/dashboard/TrendChart').then((m) => ({ default: m.TrendChart })));
 
 function useImpactStats() {
   const [stats, setStats] = useState({
@@ -128,11 +129,22 @@ export const ControlRoomDashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <NERMap
-            showLandslideRisk={showLandslide}
-            showFloodRisk={showFlood}
-            showWeather={showWeather}
-          />
+          <Suspense
+            fallback={
+              <div className="flex h-full w-full items-center justify-center bg-monsoon-900 text-monsoon-400 min-h-[380px]">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-monsoon-700 border-t-moss-400" />
+                  <span className="text-xs uppercase tracking-wider">Loading Map Engine...</span>
+                </div>
+              </div>
+            }
+          >
+            <NERMap
+              showLandslideRisk={showLandslide}
+              showFloodRisk={showFlood}
+              showWeather={showWeather}
+            />
+          </Suspense>
         </div>
 
         <div className="order-2 flex min-h-0 flex-col gap-4 lg:order-1">
@@ -156,7 +168,15 @@ export const ControlRoomDashboardPage: React.FC = () => {
         <div className="flex flex-col gap-4 xl:col-span-5">
           <SimulateIncidentPanel onTriggered={handleIncidentTriggered} />
           <div className="h-72">
-            <TrendChart />
+            <Suspense
+              fallback={
+                <div className="flex h-full w-full items-center justify-center rounded-lg border border-monsoon-800 bg-monsoon-900 text-monsoon-500">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-monsoon-700 border-t-moss-400" />
+                </div>
+              }
+            >
+              <TrendChart />
+            </Suspense>
           </div>
         </div>
       </section>

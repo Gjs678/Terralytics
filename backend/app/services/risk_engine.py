@@ -92,6 +92,7 @@ class PredictiveHazardEstimate:
         "Empirical heuristic hazard index based on terrain slope and precipitation accumulation. "
         "Not a trained ML prediction model."
     )
+    prediction_source: str = "heuristic" 
 
 
 # Baseline terrain susceptibility priors for known Northeast India corridors
@@ -500,10 +501,11 @@ def estimate_segment_hazard(
         data_freshness=data_freshness,
         data_timestamp=now_iso,
         scoring_method=SCORING_METHOD_VERSION,
+        prediction_source="heuristic",
     )
 
 
-def estimate_route_hazard(
+def estimate_route_hazard_heuristic(
     route,
     active_incidents: Optional[List[Any]] = None,
     forecast_horizon: str = "3h",
@@ -598,4 +600,40 @@ def estimate_route_hazard(
         data_freshness=data_freshness,
         data_source_weather=data_source_weather,
         data_source_terrain="ISRO Bhuvan / State Geological Survey",
+    )
+
+
+
+def estimate_route_hazard(
+    route,
+    active_incidents: Optional[List[Any]] = None,
+    forecast_horizon: str = "3h",
+    fetch_live_weather: bool = False,
+    simulated_inputs: Optional[Dict[str, Any]] = None,
+) -> PredictiveHazardEstimate:
+    """Evaluate predictive hazard risk for a full route.
+
+    1. Checks whether a trained ML model is available.
+    2. If trained ML model exists, delegates to ML prediction service.
+    3. If ML model is not available, uses the empirical heuristic engine.
+    """
+    try:
+        from .ml_prediction_service import ml_service
+        if ml_service.is_ml_model_available():
+            return ml_service.evaluate_route_hazard(
+                route=route,
+                active_incidents=active_incidents,
+                forecast_horizon=forecast_horizon,
+                fetch_live_weather=fetch_live_weather,
+                simulated_inputs=simulated_inputs,
+            )
+    except Exception:
+        pass
+
+    return estimate_route_hazard_heuristic(
+        route=route,
+        active_incidents=active_incidents,
+        forecast_horizon=forecast_horizon,
+        fetch_live_weather=fetch_live_weather,
+        simulated_inputs=simulated_inputs,
     )

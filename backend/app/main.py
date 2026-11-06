@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from . import models
 from .database import engine, SessionLocal
 from .seed import seed_if_empty
-from .routes import fleet, routes_api, incidents, alerts, blockage, impact
+from .routes import fleet, routes_api, incidents, alerts, blockage, impact, ml_routes
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -48,3 +48,5 @@ app.include_router(incidents.router)
 app.include_router(alerts.router)
 app.include_router(blockage.router)
 app.include_router(impact.router)
+
+app.include_router(ml_routes.router)

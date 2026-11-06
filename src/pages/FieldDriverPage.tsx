@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ConnectivityBadge } from '../components/field-app/ConnectivityBadge';
 import { LanguageSwitcher } from '../components/field-app/LanguageSwitcher';
-import { DriverMap } from '../components/field-app/DriverMap';
 import { ReportBlockageButton } from '../components/field-app/ReportBlockageButton';
 import { RerouteBanner } from '../components/field-app/RerouteBanner';
 import { VoiceCommandButton } from '../components/field-app/VoiceCommandButton';
 import { RouteExplanationAI } from '../components/field-app/RouteExplanationAI';
+
+const DriverMap = React.lazy(() => import('../components/field-app/DriverMap').then((m) => ({ default: m.DriverMap })));
 import {
   Navigation,
   Menu,
@@ -185,14 +186,25 @@ export const FieldDriverPage: React.FC = () => {
     <div className="relative h-full animate-fade-in bg-monsoon-50 overflow-hidden">
       {/* Main Map Container - FULL SCREEN */}
       <div className="absolute inset-0 z-0">
-        <DriverMap
-          key={selectedOrderId || 'empty'}
-          activeRoute={activeRouteForMap}
-          fastestRoute={selectedOrder ? selectedOrder.fastestRoute || null : null}
-          dangerZone={selectedOrder ? selectedOrder.dangerZone || null : null}
-          vehiclePosition={simState.currentPosition}
-          simulationStatus={simState.status}
-        />
+        <React.Suspense
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center bg-monsoon-900 text-monsoon-400">
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-monsoon-700 border-t-moss-400" />
+                <span className="text-xs uppercase tracking-wider">Loading Navigation Map...</span>
+              </div>
+            </div>
+          }
+        >
+          <DriverMap
+            key={selectedOrderId || 'empty'}
+            activeRoute={activeRouteForMap}
+            fastestRoute={selectedOrder ? selectedOrder.fastestRoute || null : null}
+            dangerZone={selectedOrder ? selectedOrder.dangerZone || null : null}
+            vehiclePosition={simState.currentPosition}
+            simulationStatus={simState.status}
+          />
+        </React.Suspense>
       </div>
 
       {/* Top App Bar - FLOATING */}

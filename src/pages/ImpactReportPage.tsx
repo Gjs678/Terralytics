@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { MOCK_IMPACT_STATS } from '../data/mockImpactStats';
 import { StatBlock } from '../components/shared/StatBlock';
 import { Download, Share2, Leaf, ShieldCheck, Map } from 'lucide-react';
-import { TrendChart } from '../components/dashboard/TrendChart';
+
+const TrendChart = lazy(() => import('../components/dashboard/TrendChart').then((m) => ({ default: m.TrendChart })));
 
 export const ImpactReportPage: React.FC = () => {
   return (
@@ -61,7 +62,15 @@ export const ImpactReportPage: React.FC = () => {
       </div>
 
       <div className="bg-monsoon-900 rounded-lg border border-monsoon-800 p-6 h-80">
-        <TrendChart />
+        <Suspense
+          fallback={
+            <div className="flex h-full w-full items-center justify-center text-monsoon-500">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-monsoon-700 border-t-moss-400" />
+            </div>
+          }
+        >
+          <TrendChart />
+        </Suspense>
       </div>
     </div>
   );
